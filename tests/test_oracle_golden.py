@@ -127,7 +127,92 @@ def _method_not_allowed(testapp):
     return testapp.post('/api/tags', expect_errors=True)
 
 
+def _update_article(testapp):
+    alice, _, slug = _seed(testapp)
+    return testapp.put_json(url_for('articles.update_article', slug=slug),
+                            {'article': {'body': 'Updated body'}}, headers=auth(alice))
+
+
+def _delete_article(testapp):
+    alice = register(testapp, 'alice')
+    slug = make_article(testapp, alice)['slug']
+    return testapp.delete(url_for('articles.delete_article', slug=slug), headers=auth(alice))
+
+
+def _favorite(testapp):
+    _, bob, slug = _seed(testapp)
+    return testapp.post(url_for('articles.favorite_an_article', slug=slug), headers=auth(bob))
+
+
+def _unfavorite(testapp):
+    _, bob, slug = _seed(testapp)
+    testapp.post(url_for('articles.favorite_an_article', slug=slug), headers=auth(bob))
+    return testapp.delete(url_for('articles.unfavorite_an_article', slug=slug), headers=auth(bob))
+
+
+def _make_comment(testapp):
+    alice, _, slug = _seed(testapp)
+    return testapp.post_json(url_for('articles.make_comment_on_article', slug=slug),
+                             {'comment': {'body': 'Thanks'}}, headers=auth(alice))
+
+
+def _delete_comment(testapp):
+    _, bob, slug = _seed(testapp)
+    return testapp.delete(url_for('articles.delete_comment_on_article', slug=slug, cid=1),
+                          headers=auth(bob))
+
+
+def _follow(testapp):
+    _, bob, _ = _seed(testapp)
+    return testapp.post(url_for('profiles.follow_user', username='alice'), headers=auth(bob))
+
+
+def _unfollow(testapp):
+    _, bob, _ = _seed(testapp)
+    testapp.post(url_for('profiles.follow_user', username='alice'), headers=auth(bob))
+    return testapp.delete(url_for('profiles.unfollow_user', username='alice'), headers=auth(bob))
+
+
+def _update_user(testapp):
+    alice, _, _ = _seed(testapp)
+    return testapp.put_json(url_for('user.update_user'), {'user': {
+        'bio': 'New bio', 'image': 'http://img.example.com/alice.png'}}, headers=auth(alice))
+
+
+def _register_invalid_email(testapp):
+    return testapp.post_json(url_for('user.register_user'), {'user': {
+        'username': 'carol', 'email': 'not-an-email', 'password': 'secret'}}, expect_errors=True)
+
+
+def _malformed_json(testapp):
+    return testapp.post(url_for('user.register_user'), '{not json', content_type='application/json',
+                        expect_errors=True)
+
+
+def _comments_missing_article(testapp):
+    return testapp.get(url_for('articles.get_comments', slug='missing'), expect_errors=True)
+
+
+def _follow_missing_user(testapp):
+    alice, _, _ = _seed(testapp)
+    return testapp.post(url_for('profiles.follow_user', username='nobody'), headers=auth(alice),
+                        expect_errors=True)
+
+
 SCENARIOS = {
+    'update_article': _update_article,
+    'delete_article': _delete_article,
+    'favorite': _favorite,
+    'unfavorite': _unfavorite,
+    'make_comment': _make_comment,
+    'delete_comment': _delete_comment,
+    'follow': _follow,
+    'unfollow': _unfollow,
+    'update_user': _update_user,
+    'register_invalid_email': _register_invalid_email,
+    'malformed_json': _malformed_json,
+    'comments_missing_article': _comments_missing_article,
+    'follow_missing_user': _follow_missing_user,
     'register': _register,
     'register_duplicate': _register_duplicate,
     'login': _login,

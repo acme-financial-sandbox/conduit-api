@@ -38,5 +38,11 @@ jobs:
       - name: Run tests (flask test)
         run: flask test
 
+      - name: Coverage gate
+        # Branch coverage floor for conduit/ (currently ~99%).
+        run: |
+          coverage run -m pytest -q -p no:cacheprovider tests
+          coverage report --fail-under=90
+
       - name: Lint (flask lint)
         run: flask lint

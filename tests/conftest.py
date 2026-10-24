@@ -11,6 +11,7 @@ from conduit.profile.models import UserProfile
 
 
 from .factories import UserFactory
+from .oracle_helpers import register
 
 
 @pytest.yield_fixture(scope='function')
@@ -59,3 +60,27 @@ def user(db):
             db.session.commit()
             return muser
     return User()
+
+
+@pytest.fixture
+def alice(testapp, db):
+    """Auth token for a user registered over HTTP."""
+    return register(testapp, 'alice')
+
+
+@pytest.fixture
+def bob(testapp, db):
+    """Auth token for a second user registered over HTTP."""
+    return register(testapp, 'bob')
+
+
+@pytest.fixture
+def raises_unhandled(app):
+    """Unhandled exceptions propagate under TestConfig; don't leave their request context pushed."""
+    app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
+
+
+@pytest.fixture
+def no_propagate(app, raises_unhandled):
+    """Let Flask turn unhandled exceptions into the 500 response production users see."""
+    app.config['PROPAGATE_EXCEPTIONS'] = False

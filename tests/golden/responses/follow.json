@@ -1,0 +1,14 @@
+{
+  "body": {
+    "profile": {
+      "bio": null,
+      "email": "alice@example.com",
+      "following": true,
+      "image": null,
+      "username": "alice"
+    }
+  },
+  "content_type": "application/json",
+  "request": "POST /api/profiles/alice/follow",
+  "status": 200
+}

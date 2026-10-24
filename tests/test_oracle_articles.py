@@ -11,25 +11,13 @@ from sqlalchemy.exc import OperationalError
 
 from conduit.exceptions import ARTICLE_NOT_FOUND
 
-from .oracle_helpers import auth, make_article, make_comment, register
+from .oracle_helpers import auth, make_article, make_comment
 
 ARTICLE_KEYS = {'author', 'body', 'createdAt', 'description', 'favorited', 'favoritesCount',
                 'slug', 'tagList', 'title', 'updatedAt'}
 PROFILE_KEYS = {'bio', 'email', 'following', 'image', 'username'}
 COMMENT_KEYS = {'author', 'body', 'createdAt', 'id', 'updatedAt'}
 SERVER_ERROR_HTML = '<title>500 Internal Server Error</title>'
-
-
-@pytest.fixture
-def raises_unhandled(app):
-    """Unhandled exceptions propagate under TestConfig; don't leave their request context pushed."""
-    app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = False
-
-
-@pytest.fixture
-def no_propagate(app, raises_unhandled):
-    """Let Flask turn unhandled exceptions into the 500 response production users see."""
-    app.config['PROPAGATE_EXCEPTIONS'] = False
 
 
 def get_with_json_body(testapp, endpoint, body, **kwargs):
@@ -40,16 +28,6 @@ def get_with_json_body(testapp, endpoint, body, **kwargs):
 
 def slugs(resp):
     return [a['slug'] for a in resp.json['articles']]
-
-
-@pytest.fixture
-def alice(testapp, db):
-    return register(testapp, 'alice')
-
-
-@pytest.fixture
-def bob(testapp, db):
-    return register(testapp, 'bob')
 
 
 class TestGetArticle:
