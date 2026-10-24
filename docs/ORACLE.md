@@ -29,6 +29,53 @@ matches the pins exactly, then runs `flask test` and `flask lint`. Any failure f
 The legacy `.travis.yml` (2.7–3.6) and `.circleci/config.yml` (3.6.0) were removed so there is
 only one Python version.
 
+### Merge gate (branch protection)
+
+Passing CI is required to merge into the default branch (`dependabot/pip/mako-1.2.2`). This is a
+GitHub repository setting, not a committed file, so a repo admin has to apply it. The rule:
+
+* requires a pull request before merging (no approvals required);
+* requires status checks to pass, with "require branches to be up to date" (`strict`) enabled;
+* requires both matrix jobs of the `CI` workflow, by their exact check names:
+  * `Oracle (Python 3.7.17, FLASK_DEBUG=0)`
+  * `Oracle (Python 3.7.17, FLASK_DEBUG=1)`
+* binds them to the GitHub Actions app (`app_id` 15368), so only Actions can satisfy them;
+* applies to admins too (`enforce_admins`).
+
+Apply it as an admin (the branch name contains `/`, so it is URL-encoded):
+
+```sh
+gh api --method PUT \
+  -H "Accept: application/vnd.github+json" \
+  "repos/acme-financial-sandbox/conduit-api/branches/dependabot%2Fpip%2Fmako-1.2.2/protection" \
+  --input - <<'JSON'
+{
+  "required_status_checks": {
+    "strict": true,
+    "checks": [
+      {"context": "Oracle (Python 3.7.17, FLASK_DEBUG=0)", "app_id": 15368},
+      {"context": "Oracle (Python 3.7.17, FLASK_DEBUG=1)", "app_id": 15368}
+    ]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 0
+  },
+  "restrictions": null
+}
+JSON
+```
+
+Check it:
+
+```sh
+gh api "repos/acme-financial-sandbox/conduit-api/branches/dependabot%2Fpip%2Fmako-1.2.2/protection" \
+  --jq '{strict: .required_status_checks.strict, checks: [.required_status_checks.checks[].context], pr: (.required_pull_request_reviews != null), admins: .enforce_admins.enabled}'
+```
+
+If the job `name:` or the matrix in `ci.yml` changes, update the required check names too.
+Otherwise every PR waits forever on a check that never reports.
+
 ## What is frozen
 
 ### Environment
