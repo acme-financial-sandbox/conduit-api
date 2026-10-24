@@ -35,5 +35,12 @@ jobs:
       - name: Run tests (flask test)
         run: flask test
 
+      - name: Coverage gate
+        # Branch coverage of conduit/ must not drop; the only gaps are unreachable branches
+        # (Python 2 shims in conduit/compat.py and two defensive branches).
+        run: |
+          coverage run -m pytest -q -p no:cacheprovider tests
+          coverage report --fail-under=99
+
       - name: Lint (flask lint)
         run: flask lint

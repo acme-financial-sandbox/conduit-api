@@ -1,0 +1,16 @@
+{
+  "body": {
+    "user": {
+      "bio": "New bio",
+      "createdAt": "<timestamp>",
+      "email": "alice@example.com",
+      "image": "http://img.example.com/alice.png",
+      "token": "<token>",
+      "updatedAt": "<timestamp>",
+      "username": "alice"
+    }
+  },
+  "content_type": "application/json",
+  "request": "PUT /api/user",
+  "status": 200
+}

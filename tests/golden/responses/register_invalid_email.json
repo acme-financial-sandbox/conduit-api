@@ -1,0 +1,6 @@
+{
+  "body": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n<title>422 Unprocessable Entity</title>\n<h1>Unprocessable Entity</h1>\n<p>The request was well-formed but was unable to be followed due to semantic errors.</p>\n",
+  "content_type": "text/html; charset=utf-8",
+  "request": "POST /api/users",
+  "status": 422
+}

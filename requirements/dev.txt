@@ -24,3 +24,4 @@ soupsieve==2.4.1
 tomli==2.0.1
 waitress==2.1.2
 WebOb==1.8.11
+coverage==7.2.7

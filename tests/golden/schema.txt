@@ -1,0 +1,40 @@
+article
+  id Integer() pk
+  slug Text() nullable,unique
+  title String(length=100) -
+  description Text() -
+  body Text() nullable
+  createdAt DateTime() -
+  updatedAt DateTime() -
+  author_id Integer() - -> userprofile.id
+comment
+  id Integer() pk
+  body Text() nullable
+  createdAt DateTime() -
+  updatedAt DateTime() -
+  author_id Integer() - -> userprofile.id
+  article_id Integer() - -> article.id
+favoritor_assoc
+  favoriter Integer() nullable -> userprofile.id
+  favorited_article Integer() nullable -> article.id
+followers_assoc
+  follower Integer() nullable -> userprofile.user_id
+  followed_by Integer() nullable -> userprofile.user_id
+tag_assoc
+  tag Integer() nullable -> tags.id
+  article Integer() nullable -> article.id
+tags
+  id Integer() pk
+  tagname String(length=100) nullable
+userprofile
+  id Integer() pk
+  user_id Integer() - -> users.id
+users
+  id Integer() pk
+  username String(length=80) unique
+  email String(length=100) unique
+  password Binary() nullable
+  created_at DateTime() -
+  updated_at DateTime() -
+  bio String(length=300) nullable
+  image String(length=120) nullable

@@ -58,6 +58,9 @@ only one Python version.
   `JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)`, so token claims can be asserted. The
   `Config`/`ProdConfig` defaults, including the hardcoded `'secret-key'` fallback, are deliberately
   **unchanged**. That fallback is a known issue for the upgrade.
+* CI also runs the suite under `coverage` (config in `setup.cfg`) and fails below 99% branch
+  coverage of `conduit/`. The only uncovered code is unreachable (the Python 2 shims in
+  `conduit/compat.py` and two defensive branches).
 * Tests always run under `TestConfig` (in-memory SQLite) through the `app` fixture, whatever
   `FLASK_DEBUG` is set to. `tests/test_config.py` asserts this.
 
@@ -69,6 +72,9 @@ only one Python version.
 * Golden masters under `tests/golden/` (`tests/test_oracle_golden.py`):
   * `url_map.txt`: every route with its endpoint, methods and arguments (the same data as
     `flask urls`). It catches routes being added, removed or changed.
+  * `schema.txt`: every table and column with type, nullability, uniqueness and foreign keys
+    (`tests/test_oracle_models.py`). It catches ORM/schema drift during a SQLAlchemy upgrade.
+  * `cli_urls.txt`: the exact output of `flask urls` (`tests/test_oracle_commands.py`).
   * `responses/*.json`: status, content type and normalized body for representative requests.
     `token`, `createdAt` and `updatedAt` are replaced with `<token>` / `<timestamp>`.
 
@@ -94,11 +100,29 @@ pytest -m oracle_known_bug --collect-only -q
 | `TestGetArticle::test_identity_leaks_to_later_anonymous_requests_in_test_app` | test harness: Flask-JWT-Extended 3 caches the user on the app context, which the `app` fixture keeps pushed, so later anonymous requests in the same test still see the last user |
 | `test_oracle_user.py::TestLoginFailures::test_wrong_password_is_404_user_not_found` | a wrong password returns 404 `User not found`, not 401/422 |
 | `TestGetUser::test_echoes_token_parsed_from_raw_header` | `get_user` echoes the token parsed from `HTTP_AUTHORIZATION` with `split('Token ')[1]` |
+| `test_oracle_validation.py::TestUnvalidatedInput::*` | missing required fields (`username`/`email`/`password`/`title`/`description`/`body`), missing envelopes (`user`/`article`/`comment`), empty or form-encoded bodies, and unexpected `slug`/`createdAt` on create reach the view and raise `TypeError`/`KeyError` (500) |
+| `TestSchemaValidation::test_422_is_html_without_field_errors` | marshmallow validation failures (bad email/URL, unknown field, null field, non-int `limit`) are Werkzeug HTML 422s with no field errors |
+| `test_oracle_user_update.py::TestUpdateUser::test_response_token_is_empty` | `PUT /api/user` returns `token: ""` (the `User.token` class default) |
+| `TestUpdateUser::test_updated_at_is_not_bumped` / `test_sending_updated_at_resets_it_to_created_at` | `updated_at` never changes on update; sending `updatedAt` sets it to `created_at` |
+| `TestUpdateUser::test_duplicate_raises_integrity_error` / `test_duplicate_is_500` | changing email/username to a taken one is an `IntegrityError` (500), not 422 |
+| `TestJwtEdges::test_token_without_exp_is_accepted` | a correctly signed token with no `exp` claim never expires |
+| `test_oracle_profiles.py::TestGetProfile::test_exposes_email` | public profiles include the user's email |
+| `test_oracle_articles_edges.py::TestCreateArticle::test_duplicate_title_*` | a title that slugifies to an existing slug is an `IntegrityError` (500) |
+| `TestUpdateArticleEdges::test_body_slug_overrides_url_slug` | a `slug` in the PUT body replaces the URL `<slug>` used for the lookup |
+| `TestUpdateArticleEdges::test_created_at_is_client_writable` | `createdAt` can be overwritten on update |
+| `TestUpdateArticleEdges::test_tag_list_update_*` | updating `tagList` assigns strings to the relationship: `AttributeError` (500) |
+| `TestDeleteArticleEdges::test_article_with_comments_*` | deleting an article that has comments nulls `comment.article_id`: `IntegrityError` (500), article survives |
+| `TestCommentEdges::test_id_and_created_at_are_client_writable` | clients can choose the comment `id` and `createdAt` |
+| `TestCommentEdges::test_delete_non_numeric_id_raises` / `test_delete_comment_via_other_article_slug_is_500` | non-numeric or other-article comment ids hit `None.delete()` (500) |
+| `test_oracle_commands.py::TestUrls::test_matching_url_crashes` | `flask urls --url <matching path>` crashes formatting the arguments dict (`TypeError`) |
 
 Other quirks are asserted without the marker: the slug is not regenerated when the title changes,
 `articlesCount` is the page size rather than the total, `DELETE` endpoints return an empty
 `text/html` 200, JWT errors use `{"msg": ...}` instead of the `errors` envelope, and unknown routes
-or methods return Werkzeug HTML pages.
+or methods return Werkzeug HTML pages. Also: following yourself is a silent 200 no-op, trailing
+slashes are accepted, `limit: -1` returns every article, the article list is oldest-first (the feed
+is newest-first), slugs/usernames/emails are case-sensitive, and SQLite does not enforce `String(n)`
+lengths (PostgreSQL would).
 
 ## Comparing after an upgrade
 

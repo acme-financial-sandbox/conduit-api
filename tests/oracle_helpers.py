@@ -57,6 +57,17 @@ def make_comment(testapp, token, slug, body='Nice article'):
     return resp.json['comment']
 
 
+def send(testapp, method, url, data=None, token=None, raw=None,
+         content_type='application/json', headers=None):
+    """Raw request with an optional JSON body (also on GET/DELETE); never raises on 4xx/5xx."""
+    if raw is None:
+        raw = b'' if data is None else json.dumps(data).encode('utf-8')
+    all_headers = dict(auth(token)) if token else {}
+    all_headers.update(headers or {})
+    return testapp.request(url, method=method, body=raw, content_type=content_type,
+                           headers=all_headers, expect_errors=True)
+
+
 def normalize(data):
     """Replace volatile values (tokens, timestamps) with stable placeholders."""
     if isinstance(data, dict):

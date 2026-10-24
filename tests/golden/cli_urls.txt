@@ -1,0 +1,22 @@
+Rule                                 Endpoint                          
+-----------------------------------------------------------------------
+/api/articles                        articles.get_articles             
+/api/articles                        articles.make_article             
+/api/articles/<slug>                 articles.update_article           
+/api/articles/<slug>                 articles.delete_article           
+/api/articles/<slug>                 articles.get_article              
+/api/articles/<slug>/comments        articles.get_comments             
+/api/articles/<slug>/comments        articles.make_comment_on_article  
+/api/articles/<slug>/comments/<cid>  articles.delete_comment_on_article
+/api/articles/<slug>/favorite        articles.favorite_an_article      
+/api/articles/<slug>/favorite        articles.unfavorite_an_article    
+/api/articles/feed                   articles.articles_feed            
+/api/profiles/<username>             profiles.get_profile              
+/api/profiles/<username>/follow      profiles.follow_user              
+/api/profiles/<username>/follow      profiles.unfollow_user            
+/api/tags                            articles.get_tags                 
+/api/user                            user.get_user                     
+/api/user                            user.update_user                  
+/api/users                           user.register_user                
+/api/users/login                     user.login_user                   
+/static/<path:filename>              static                            
