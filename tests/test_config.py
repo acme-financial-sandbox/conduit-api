@@ -43,3 +43,17 @@ def test_app_fixture_always_uses_test_config(app, monkeypatch):
         fresh = create_app(TestConfig)
         assert fresh.config['TESTING']
         assert fresh.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite://'
+
+
+def test_database_url_from_env_default(monkeypatch):
+    from conduit.settings import database_url_from_env
+    monkeypatch.delenv('DATABASE_URL', raising=False)
+    assert database_url_from_env() == 'postgresql://localhost/example'
+
+
+def test_database_url_from_env_rewrites_heroku_scheme(monkeypatch):
+    from conduit.settings import database_url_from_env
+    monkeypatch.setenv('DATABASE_URL', 'postgres://u:p@host:5432/db')
+    assert database_url_from_env() == 'postgresql://u:p@host:5432/db'
+    monkeypatch.setenv('DATABASE_URL', 'postgresql://u:p@host:5432/db')
+    assert database_url_from_env() == 'postgresql://u:p@host:5432/db'
