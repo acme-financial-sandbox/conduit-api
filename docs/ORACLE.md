@@ -170,6 +170,15 @@ slashes are accepted, `limit: -1` returns every article, the article list is old
 is newest-first), slugs/usernames/emails are case-sensitive, and SQLite does not enforce `String(n)`
 lengths (PostgreSQL would).
 
+The wire format is pinned in `tests/test_oracle_wire_format.py`, because the other tests compare
+parsed JSON and the golden files mask timestamps. JSON bodies use Flask 1.1 `jsonify`: sorted keys,
+non-ASCII escaped as `\uXXXX`, and a trailing newline. They are pretty-printed (indent 2, `", "`
+separators) when `app.debug` is on (TestConfig/DevConfig) and compact under ProdConfig. Timestamps
+are naive `datetime.isoformat()` strings (no offset or `Z`, microseconds dropped when zero), and
+a client-supplied UTC offset is discarded rather than converted. A request without an `Origin`
+header still gets `Access-Control-Allow-Origin: http://0.0.0.0:4000`, the first whitelist entry in
+sorted order.
+
 ## Comparing after an upgrade
 
 1. On the baseline (this commit, pinned env), confirm that `flask test` and `flask lint` are green.

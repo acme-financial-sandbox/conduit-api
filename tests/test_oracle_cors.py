@@ -33,6 +33,13 @@ class TestCors:
         assert resp.status_int == 200
         assert 'Access-Control-Allow-Origin' not in resp.headers
 
+    def test_no_origin_gets_first_sorted_whitelist_entry(self, testapp, db):
+        """Flask-Cors ``always_send``: with no ``Origin`` header it still sends an origin."""
+        resp = testapp.get('/api/tags')
+        assert resp.headers['Access-Control-Allow-Origin'] == sorted(Config.CORS_ORIGIN_WHITELIST)[0]
+        assert resp.headers['Access-Control-Allow-Origin'] == 'http://0.0.0.0:4000'
+        assert resp.headers['Vary'] == 'Origin'
+
     def test_preflight(self, testapp, db):
         resp = preflight(testapp, '/api/user', ALLOWED, method='PUT', headers='authorization,content-type')
         assert resp.status_int == 200
