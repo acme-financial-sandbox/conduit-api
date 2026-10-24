@@ -1,33 +1,39 @@
+# requirements/prod.txt and requirements/dev.txt are the source of truth (CI
+# installs them). These pins mirror the direct dependencies listed there; see
+# docs/ORACLE.md.
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
 [packages]
-werkzeug = "*"
-sqlalchemy = "*"
-click = "*"
-marshmallow = "*"
-flask-apispec = "*"
-unicode-slugify = "*"
-"psycopg2" = "*"
-gunicorn = "*"
-Flask-Caching = "*"
-Flask-SQLAlchemy = "*"
-Flask-Bcrypt = "*"
-Flask = "*"
-PyJWT = "*"
-Flask-JWT-Extended = "*"
-Flask-Migrate = "*"
-Flask-Cors = "*"
+werkzeug = "==1.0.1"
+sqlalchemy = "==1.1.9"
+click = "==7.1.2"
+marshmallow = "==3.19.0"
+flask-apispec = "==0.11.4"
+unicode-slugify = "==0.1.5"
+"psycopg2" = "==2.9.9"
+gunicorn = "==23.0.0"
+Flask-Caching = "==2.1.0"
+Flask-SQLAlchemy = "==2.2"
+Flask-Bcrypt = "==1.0.1"
+Flask = "==1.1.4"
+PyJWT = "==1.7.1"
+Flask-JWT-Extended = "==3.25.1"
+Flask-Migrate = "==4.0.1"
+Flask-Cors = "==5.0.0"
+MarkupSafe = "==2.0.1"
 
 [dev-packages]
 # Testing
-pytest = "*"
-WebTest = "*"
-factory-boy = "*"
+pytest = "==7.4.4"
+WebTest = "==3.0.1"
+factory-boy = "==3.3.0"
 # For python 3
-Faker = "*"
+Faker = "==18.13.0"
+flake8 = "==5.0.4"
 
 [requires]
 python_version = "3.7"
+python_full_version = "3.7.17"

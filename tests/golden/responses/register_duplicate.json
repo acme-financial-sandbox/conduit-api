@@ -1,0 +1,12 @@
+{
+  "body": {
+    "errors": {
+      "body": [
+        "User already registered"
+      ]
+    }
+  },
+  "content_type": "application/json",
+  "request": "POST /api/users",
+  "status": 422
+}

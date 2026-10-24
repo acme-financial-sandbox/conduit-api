@@ -1,0 +1,22 @@
+{
+  "body": {
+    "comments": [
+      {
+        "author": {
+          "bio": null,
+          "email": "bob@example.com",
+          "following": false,
+          "image": null,
+          "username": "bob"
+        },
+        "body": "Great read",
+        "createdAt": "<timestamp>",
+        "id": 1,
+        "updatedAt": "<timestamp>"
+      }
+    ]
+  },
+  "content_type": "application/json",
+  "request": "GET /api/articles/how-to-train-your-dragon/comments",
+  "status": 200
+}

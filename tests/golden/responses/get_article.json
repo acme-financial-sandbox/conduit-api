@@ -1,0 +1,28 @@
+{
+  "body": {
+    "article": {
+      "author": {
+        "bio": null,
+        "email": "alice@example.com",
+        "following": false,
+        "image": null,
+        "username": "alice"
+      },
+      "body": "You have to believe",
+      "createdAt": "<timestamp>",
+      "description": "Ever wonder how?",
+      "favorited": false,
+      "favoritesCount": 0,
+      "slug": "how-to-train-your-dragon",
+      "tagList": [
+        "dragons",
+        "training"
+      ],
+      "title": "How to train your dragon",
+      "updatedAt": "<timestamp>"
+    }
+  },
+  "content_type": "application/json",
+  "request": "GET /api/articles/how-to-train-your-dragon",
+  "status": 200
+}

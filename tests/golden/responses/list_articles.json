@@ -1,0 +1,49 @@
+{
+  "body": {
+    "articles": [
+      {
+        "author": {
+          "bio": null,
+          "email": "alice@example.com",
+          "following": false,
+          "image": null,
+          "username": "alice"
+        },
+        "body": "You have to believe",
+        "createdAt": "<timestamp>",
+        "description": "Ever wonder how?",
+        "favorited": false,
+        "favoritesCount": 0,
+        "slug": "how-to-train-your-dragon",
+        "tagList": [
+          "dragons",
+          "training"
+        ],
+        "title": "How to train your dragon",
+        "updatedAt": "<timestamp>"
+      },
+      {
+        "author": {
+          "bio": null,
+          "email": "alice@example.com",
+          "following": false,
+          "image": null,
+          "username": "alice"
+        },
+        "body": "You have to believe",
+        "createdAt": "<timestamp>",
+        "description": "Ever wonder how?",
+        "favorited": false,
+        "favoritesCount": 0,
+        "slug": "second-article",
+        "tagList": [],
+        "title": "Second article",
+        "updatedAt": "<timestamp>"
+      }
+    ],
+    "articlesCount": 2
+  },
+  "content_type": "application/json",
+  "request": "GET /api/articles",
+  "status": 200
+}

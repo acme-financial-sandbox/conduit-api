@@ -1,0 +1,8 @@
+{
+  "body": {
+    "msg": "Bad Authorization header. Expected value 'Token <JWT>'"
+  },
+  "content_type": "application/json",
+  "request": "GET /api/user",
+  "status": 422
+}
