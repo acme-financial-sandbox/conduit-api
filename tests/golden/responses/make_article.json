@@ -1,0 +1,27 @@
+{
+  "body": {
+    "article": {
+      "author": {
+        "bio": null,
+        "email": "alice@example.com",
+        "following": false,
+        "image": null,
+        "username": "alice"
+      },
+      "body": "body",
+      "createdAt": "<timestamp>",
+      "description": "desc",
+      "favorited": false,
+      "favoritesCount": 0,
+      "slug": "golden-article",
+      "tagList": [
+        "golden"
+      ],
+      "title": "Golden article",
+      "updatedAt": "<timestamp>"
+    }
+  },
+  "content_type": "application/json",
+  "request": "POST /api/articles",
+  "status": 200
+}

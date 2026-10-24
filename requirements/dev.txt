@@ -1,9 +1,26 @@
 # Everything the developer needs in addition to the production requirements
+# Frozen oracle baseline for Python 3.7.17 -- every package is pinned.
 -r prod.txt
 
 # Testing
-pytest
-WebTest
-factory-boy
+pytest==7.4.4
+WebTest==3.0.1
+factory-boy==3.3.0
 # For python 3
-Faker
+Faker==18.13.0
+
+# Linting (`flask lint`)
+flake8==5.0.4
+
+# Transitive dependencies
+beautifulsoup4==4.15.0
+exceptiongroup==1.3.1
+iniconfig==2.0.0
+mccabe==0.7.0
+pluggy==1.2.0
+pycodestyle==2.9.1
+pyflakes==2.5.0
+soupsieve==2.4.1
+tomli==2.0.1
+waitress==2.1.2
+WebOb==1.8.11

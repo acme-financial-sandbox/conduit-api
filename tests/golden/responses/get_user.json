@@ -1,0 +1,16 @@
+{
+  "body": {
+    "user": {
+      "bio": null,
+      "createdAt": "<timestamp>",
+      "email": "alice@example.com",
+      "image": null,
+      "token": "<token>",
+      "updatedAt": "<timestamp>",
+      "username": "alice"
+    }
+  },
+  "content_type": "application/json",
+  "request": "GET /api/user",
+  "status": 200
+}

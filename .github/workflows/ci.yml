@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  oracle:
+    name: Oracle (Python 3.7.17, FLASK_DEBUG=${{ matrix.flask_debug }})
+    runs-on: ubuntu-latest
+    # Pinned by digest so the interpreter, pip and system libs are frozen too.
+    container: python:3.7.17-bookworm@sha256:eedf63967cdb57d8214db38ce21f105003ed4e4d0358f02bedc057341bcf92a0
+    strategy:
+      fail-fast: false
+      matrix:
+        # The test suite must be independent of FLASK_DEBUG (tests always use TestConfig).
+        flask_debug: ['0', '1']
+    env:
+      FLASK_APP: autoapp.py
+      FLASK_DEBUG: ${{ matrix.flask_debug }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pinned dependencies
+        run: pip install --no-cache-dir -r requirements/dev.txt
+
+      - name: Verify installed environment matches the pins exactly
+        run: |
+          pip check
+          normalize() { sed -E 's/[-_.]+/-/g' | tr 'A-Z' 'a-z' | sort; }
+          pip freeze | normalize > /tmp/installed.txt
+          grep -hvE '^\s*(#|-r|$)' requirements/prod.txt requirements/dev.txt | normalize > /tmp/pinned.txt
+          diff -u /tmp/pinned.txt /tmp/installed.txt
+
+      - name: Run tests (flask test)
+        run: flask test
+
+      - name: Lint (flask lint)
+        run: flask lint

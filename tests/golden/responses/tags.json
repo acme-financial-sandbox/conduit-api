@@ -1,0 +1,11 @@
+{
+  "body": {
+    "tags": [
+      "dragons",
+      "training"
+    ]
+  },
+  "content_type": "application/json",
+  "request": "GET /api/tags",
+  "status": 200
+}

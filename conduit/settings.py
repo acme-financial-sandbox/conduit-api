@@ -59,3 +59,6 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     # For faster tests; needs at least 4 to avoid "ValueError: Invalid rounds"
     BCRYPT_LOG_ROUNDS = 4
+    # Fixed values so JWT-dependent oracle tests are reproducible (docs/ORACLE.md).
+    SECRET_KEY = 'conduit-oracle-test-secret-key'
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
