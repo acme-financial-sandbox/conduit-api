@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   oracle:
     name: Oracle (Python 3.7.17, FLASK_DEBUG=${{ matrix.flask_debug }})

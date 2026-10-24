@@ -3,9 +3,11 @@
 Quickstart
 ----------
 
-CircleCI build:
+CI build:
 
-.. image:: https://circleci.com/gh/gothinkster/flask-realworld-example-app.png
+.. image:: https://github.com/acme-financial-sandbox/conduit-api/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/acme-financial-sandbox/conduit-api/actions/workflows/ci.yml
+    :alt: CI
 
 
 First, set your app's secret key as an environment variable. For example,
