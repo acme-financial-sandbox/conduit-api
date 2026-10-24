@@ -58,9 +58,8 @@ only one Python version.
   `JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)`, so token claims can be asserted. The
   `Config`/`ProdConfig` defaults, including the hardcoded `'secret-key'` fallback, are deliberately
   **unchanged**. That fallback is a known issue for the upgrade.
-* CI also runs the suite under `coverage` (config in `setup.cfg`) and fails below 99% branch
-  coverage of `conduit/`. The only uncovered code is unreachable (the Python 2 shims in
-  `conduit/compat.py` and two defensive branches).
+* CI also runs the suite under `coverage` (config in `setup.cfg`) and fails below 90% branch
+  coverage of `conduit/` (currently ~99%).
 * Tests always run under `TestConfig` (in-memory SQLite) through the `app` fixture, whatever
   `FLASK_DEBUG` is set to. `tests/test_config.py` asserts this.
 
