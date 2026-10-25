@@ -10,7 +10,8 @@ from conduit.settings import TestConfig
 from .oracle_helpers import auth, register
 
 USER_KEYS = {'bio', 'createdAt', 'email', 'image', 'token', 'updatedAt', 'username'}
-BAD_HEADER = {'msg': "Bad Authorization header. Expected value 'Token <JWT>'"}
+BAD_HEADER = {'msg': "Bad Authorization header. Expected 'Authorization: Token <JWT>'"}
+MISSING_TYPE = {'msg': "Missing 'Token' type in 'Authorization' header. Expected 'Authorization: Token <JWT>'"}
 
 
 @pytest.fixture
@@ -59,16 +60,22 @@ class TestJwtRequired:
         assert resp.json == {'msg': 'Not enough segments'}
 
     def test_bad_signature(self, testapp, token):
-        forged = jwt.encode(jwt.decode(token, verify=False), 'wrong-secret',
-                            algorithm='HS256').decode('ascii')
+        forged = jwt.encode(jwt.decode(token, options={'verify_signature': False}), 'wrong-secret',
+                            algorithm='HS256')
         resp = testapp.get(url_for('user.get_user'), headers=auth(forged), expect_errors=True)
         assert resp.status_int == 422
         assert resp.json == {'msg': 'Signature verification failed'}
 
-    @pytest.mark.parametrize('header', ['Bearer {}', 'token {}', '{}', 'Token'])
-    def test_bad_prefix(self, testapp, token, header):
+    @pytest.mark.parametrize('header', ['Bearer {}', 'token {}', '{}'])
+    def test_wrong_scheme_counts_as_missing(self, testapp, token, header):
         resp = testapp.get(url_for('user.get_user'),
                            headers={'Authorization': header.format(token)}, expect_errors=True)
+        assert resp.status_int == 401
+        assert resp.json == MISSING_TYPE
+
+    def test_scheme_without_token(self, testapp, token):
+        resp = testapp.get(url_for('user.get_user'),
+                           headers={'Authorization': 'Token'}, expect_errors=True)
         assert resp.status_int == 422
         assert resp.json == BAD_HEADER
 

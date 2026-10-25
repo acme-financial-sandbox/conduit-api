@@ -35,6 +35,9 @@ class Config(object):
         'http://localhost:4000',
     ]
     JWT_HEADER_TYPE = 'Token'
+    # Keep the Flask-JWT-Extended 3 claim name (4.x defaults to 'sub') so tokens issued before the
+    # upgrade stay valid and integer user ids don't trip PyJWT's "sub must be a string" check.
+    JWT_IDENTITY_CLAIM = 'identity'
 
 
 class ProdConfig(Config):
