@@ -9,10 +9,10 @@ permissions:
 
 jobs:
   oracle:
-    name: Oracle (Python 3.7.17, FLASK_DEBUG=${{ matrix.flask_debug }})
+    name: Oracle (Python 3.13.17, FLASK_DEBUG=${{ matrix.flask_debug }})
     runs-on: ubuntu-latest
     # Pinned by digest so the interpreter, pip and system libs are frozen too.
-    container: python:3.7.17-bookworm@sha256:eedf63967cdb57d8214db38ce21f105003ed4e4d0358f02bedc057341bcf92a0
+    container: python:3.13.17-bookworm@sha256:a3799099b64fd333f262768c7a64733f6e4edb7bc569813710a100214bdcf278
     strategy:
       fail-fast: false
       matrix:
