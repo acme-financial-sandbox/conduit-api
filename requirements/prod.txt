@@ -4,9 +4,9 @@
 
 # Direct dependencies
 Werkzeug==3.1.9
-SQLAlchemy==1.4.54
+SQLAlchemy==2.0.55
 Flask_Caching==2.1.0
-Flask_SQLAlchemy==3.0.5
+Flask_SQLAlchemy==3.1.1
 click==8.5.0
 marshmallow==3.19.0
 Flask_Bcrypt==1.0.1

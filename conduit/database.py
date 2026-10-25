@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import mapped_column, relationship
 
 from .compat import basestring
 from .extensions import db
@@ -20,7 +20,8 @@ class SurrogatePK(object):
 
     __table_args__ = {'extend_existing': True}
 
-    id = db.Column(db.Integer, primary_key=True)
+    # SQLAlchemy 2 puts mixin columns last; keep ``id`` first in the table as before.
+    id = mapped_column(db.Integer, primary_key=True, sort_order=-1)
 
     @classmethod
     def get_by_id(cls, record_id):
@@ -29,7 +30,7 @@ class SurrogatePK(object):
                 (isinstance(record_id, basestring) and record_id.isdigit(),
                  isinstance(record_id, (int, float))),
         ):
-            return cls.query.get(int(record_id))
+            return db.session.get(cls, int(record_id))
 
 
 def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
