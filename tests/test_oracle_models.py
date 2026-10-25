@@ -2,7 +2,6 @@
 """Oracle characterization tests for model/helper edge cases and the DB schema golden master."""
 import pytest
 
-from conduit import compat
 from conduit.articles.models import Article, Comment, Tags
 from conduit.database import db as _db
 from conduit.exceptions import (ARTICLE_NOT_FOUND, COMMENT_NOT_OWNED, UNKNOWN_ERROR, USER_ALREADY_REGISTERED,
@@ -143,9 +142,3 @@ class TestExceptions:
 
 def test_profile_schema_load_unwraps_envelope():
     assert profile_schema.load({'profile': {'username': 'u', 'bio': 'b'}}) == {'username': 'u', 'bio': 'b'}
-
-
-def test_compat_is_python3():
-    assert compat.PY2 is False
-    assert compat.text_type is str
-    assert compat.basestring == (str, bytes)

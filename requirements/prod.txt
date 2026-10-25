@@ -5,7 +5,6 @@
 # Direct dependencies
 Werkzeug==3.1.9
 SQLAlchemy==2.0.55
-Flask_Caching==2.1.0
 Flask_SQLAlchemy==3.1.1
 click==8.5.0
 marshmallow==3.26.2
@@ -16,16 +15,15 @@ PyJWT==2.15.1
 Flask-JWT-Extended==4.7.4
 unicode_slugify==0.1.5
 psycopg2==2.9.13
-Flask-Migrate==4.0.1
-gunicorn==23.0.0
+Flask-Migrate==4.1.0
+gunicorn==26.2.0
 Flask-Cors==6.0.5
 
 # Transitive dependencies
-alembic==1.19.2
+alembic==1.20.1
 apispec==6.10.0
 blinker==1.9.0
-bcrypt==4.2.1
-cachelib==0.9.0
+bcrypt==4.3.0
 greenlet==3.5.6
 itsdangerous==2.2.0
 Jinja2==3.1.6

@@ -2,7 +2,6 @@
 """Extensions module. Each extension is initialized in the app factory located in app.py."""
 
 from flask_bcrypt import Bcrypt
-from flask_caching import Cache
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -41,7 +40,6 @@ class CRUDMixin(Model):
 bcrypt = Bcrypt()
 db = SQLAlchemy(model_class=CRUDMixin, add_models_to_shell=False)
 migrate = Migrate()
-cache = Cache()
 cors = CORS()
 
 from conduit.utils import jwt_identity, identity_loader  # noqa

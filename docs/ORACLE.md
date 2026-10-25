@@ -96,11 +96,9 @@ Otherwise every PR waits forever on a check that never reports.
   | `Flask==3.1.3` (+ `Werkzeug==3.1.9`, `Jinja2==3.1.6`, `itsdangerous==2.2.0`, `click==8.5.0`, `blinker==1.9.0`, `Flask-Cors==6.0.5`) | upgrade step 4. `conduit/http_compat.py` keeps the Flask 1.1 `jsonify` bytes and the Werkzeug 1.0 HTML error pages; the blueprint CORS hook is attached once (Flask ≥2.2 forbids changing a registered blueprint) and looks up each app's options per request |
   | `Flask-JWT-Extended==4.3.1` (+ `PyJWT==2.15.1`) | upgrade step 3: last 4.x release that supports Flask 1. `JWT_IDENTITY_CLAIM = 'identity'` keeps the 3.x token layout (old tokens stay valid), and `conduit/jwt_compat.py` ports the 3.25.1 header parsing, token-type check and `jwt_optional` so responses are unchanged |
   | `MarkupSafe==3.0.4`, `Flask-JWT-Extended==4.7.4`, `psycopg2==2.9.13` | pulled into step 4: Flask-JWT-Extended 4.3.1 needs Flask <3 (`JWT_COOKIE_CSRF_PROTECT = False` keeps the csrf claim out of header tokens); `add_models_to_shell=False` keeps the Flask-SQLAlchemy 3 shell context unchanged; Flask-SQLAlchemy 3 (also step 4, because 2.5.1 does not import on Flask 3) creates the engine in `init_app`, so the ProdConfig app now imports psycopg2, and 2.9.9 fails to import on Python 3.13 |
-  | `flake8==5.0.4` | added so `flask lint` can run; kept from the 3.7 baseline, dev tools are upgraded in a later step |
-  | `bcrypt==4.2.1` (held) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating; decided in a later step |
+  | `flake8==7.4.1`, `pytest==9.1.1`, `coverage==7.17.0` (+ `WebTest==3.0.7`, `factory-boy==3.3.3`, `Faker==40.43.0`) | upgrade step 7: dev tools upgraded. `flake8` is there so `flask lint` can run. pytest 8 removed `yield_fixture`, so `conftest.py` uses `pytest.fixture` instead. Faker 40 no longer needs python-dateutil, so that pin was dropped |
+  | `bcrypt==4.3.0` (held on 4.x) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating them, which would turn those registrations and logins into 500s |
   | `marshmallow==3.26.2`, `webargs==8.7.1`, `apispec==6.10.0` | upgrade step 6. marshmallow stays on 3.x: flask-apispec 0.11.4 (no release since 2022) fails to import with marshmallow 4 |
-  | `python-dateutil==2.9.0.post0` (held) | 3.0.0 is a brand-new major release (Faker dependency) |
-  | `coverage==7.2.7` (held) | dev tools are upgraded in a later step |
   | `legacy-cgi==2.6.4` | WebOb (WebTest) needs it on Python ≥3.13, where `cgi` was removed |
 
   Everything else is the version the clean install resolved.
