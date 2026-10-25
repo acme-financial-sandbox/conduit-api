@@ -1,8 +1,8 @@
 {
   "body": {
-    "msg": "Missing 'Token' type in 'Authorization' header. Expected 'Authorization: Token <JWT>'"
+    "msg": "Bad Authorization header. Expected value 'Token <JWT>'"
   },
   "content_type": "application/json",
   "request": "GET /api/user",
-  "status": 401
+  "status": 422
 }

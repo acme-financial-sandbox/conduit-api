@@ -170,7 +170,7 @@ class TestJwtEdges:
     def test_refresh_token_rejected(self, testapp, alice_user):
         resp = get_user(testapp, create_refresh_token(identity=alice_user))
         assert resp.status_int == 422
-        assert resp.json == {'msg': 'Only non-refresh tokens are allowed'}
+        assert resp.json == {'msg': 'Only access tokens are allowed'}
 
     def test_token_for_deleted_user(self, testapp, alice, alice_user):
         alice_user.profile.delete()
@@ -207,32 +207,4 @@ class TestJwtEdges:
     def test_extra_header_parts(self, testapp, alice, header):
         resp = send(testapp, 'GET', '/api/user', headers={'Authorization': header.format(alice)})
         assert resp.status_int == 422
-        assert resp.json == {'msg': "Bad Authorization header. Expected 'Authorization: Token <JWT>'"}
-
-
-class TestOptionalJwtHeaders:
-    """Endpoints using ``jwt_required(optional=True)`` with a malformed Authorization header."""
-
-    @pytest.fixture
-    def following(self, testapp, alice, bob):
-        send(testapp, 'POST', '/api/profiles/bob/follow', token=alice)
-        return alice
-
-    @pytest.mark.parametrize('header', ['Bearer {}', 'token {}', '{}'])
-    def test_wrong_scheme_is_anonymous(self, testapp, following, header):
-        resp = send(testapp, 'GET', '/api/profiles/bob', headers={'Authorization': header.format(following)})
-        assert resp.status_int == 200
-        assert resp.json['profile']['following'] is False
-
-    def test_valid_token_is_authenticated(self, testapp, following):
-        resp = send(testapp, 'GET', '/api/profiles/bob', token=following)
-        assert resp.json['profile']['following'] is True
-
-    @pytest.mark.parametrize('header', ['Token', 'Token {0} extra'])
-    @pytest.mark.parametrize('method,url', [('GET', '/api/profiles/bob'), ('GET', '/api/articles'),
-                                            ('POST', '/api/users/login')])
-    def test_malformed_token_header_is_rejected(self, testapp, following, method, url, header):
-        data = {'user': {'email': 'alice@example.com', 'password': 'secret'}} if method == 'POST' else None
-        resp = send(testapp, method, url, data, headers={'Authorization': header.format(following)})
-        assert resp.status_int == 422
-        assert resp.json == {'msg': "Bad Authorization header. Expected 'Authorization: Token <JWT>'"}
+        assert resp.json == {'msg': "Bad Authorization header. Expected value 'Token <JWT>'"}

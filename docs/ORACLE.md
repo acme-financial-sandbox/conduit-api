@@ -94,7 +94,7 @@ Otherwise every PR waits forever on a check that never reports.
   | --- | --- |
   | `SQLAlchemy==1.4.54`, `Flask_SQLAlchemy==2.5.1` (+ `alembic==1.12.1`) | upgrade step 1: 1.1.9 does not import on Python ≥3.10; `db.Binary` became `db.LargeBinary` (same DDL), and `postgres://` URLs are rewritten to `postgresql://` |
   | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask is upgraded in a later step |
-  | `Flask-JWT-Extended==4.3.1` (+ `PyJWT==2.15.1`) | upgrade step 3: last 4.x release that supports Flask 1. `JWT_IDENTITY_CLAIM = 'identity'` keeps the 3.x token layout, so tokens issued before the upgrade stay valid |
+  | `Flask-JWT-Extended==4.3.1` (+ `PyJWT==2.15.1`) | upgrade step 3: last 4.x release that supports Flask 1. `JWT_IDENTITY_CLAIM = 'identity'` keeps the 3.x token layout (old tokens stay valid), and `conduit/jwt_compat.py` ports the 3.25.1 header parsing, token-type check and `jwt_optional` so responses are unchanged |
   | `MarkupSafe==2.0.1` | Jinja2 2.11 imports `soft_unicode`, removed in MarkupSafe 2.1 |
   | `flake8==5.0.4` | added so `flask lint` can run; kept from the 3.7 baseline, dev tools are upgraded in a later step |
   | `bcrypt==4.2.1` (held) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating; decided in a later step |

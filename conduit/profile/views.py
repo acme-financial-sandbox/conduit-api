@@ -3,6 +3,7 @@
 from flask import Blueprint
 from flask_apispec import marshal_with
 from flask_jwt_extended import current_user, jwt_required
+from conduit.jwt_compat import jwt_optional
 
 from conduit.exceptions import InvalidUsage
 from conduit.user.models import User
@@ -12,7 +13,7 @@ blueprint = Blueprint('profiles', __name__)
 
 
 @blueprint.route('/api/profiles/<username>', methods=('GET',))
-@jwt_required(optional=True)
+@jwt_optional
 @marshal_with(profile_schema)
 def get_profile(username):
     user = User.query.filter_by(username=username).first()
