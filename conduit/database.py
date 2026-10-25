@@ -2,7 +2,6 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 from sqlalchemy.orm import mapped_column, relationship
 
-from .compat import basestring
 from .extensions import db
 
 # Alias common SQLAlchemy names
@@ -27,7 +26,7 @@ class SurrogatePK(object):
     def get_by_id(cls, record_id):
         """Get record by ID."""
         if any(
-                (isinstance(record_id, basestring) and record_id.isdigit(),
+                (isinstance(record_id, (str, bytes)) and record_id.isdigit(),
                  isinstance(record_id, (int, float))),
         ):
             return db.session.get(cls, int(record_id))

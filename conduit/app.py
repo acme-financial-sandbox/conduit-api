@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
 from flask import Flask, current_app
-from conduit.extensions import bcrypt, cache, db, migrate, jwt, cors
+from conduit.extensions import bcrypt, db, migrate, jwt, cors
 
 from conduit import commands, user, profile, articles
 from conduit.settings import ProdConfig
@@ -50,7 +50,6 @@ def create_app(config_object=ProdConfig):
 def register_extensions(app):
     """Register Flask extensions."""
     bcrypt.init_app(app)
-    cache.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
