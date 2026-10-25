@@ -4,6 +4,14 @@ import os
 from datetime import timedelta
 
 
+def database_url_from_env(default='postgresql://localhost/example'):
+    """Read ``DATABASE_URL``, accepting Heroku's ``postgres://`` scheme (rejected by SQLAlchemy >= 1.4)."""
+    url = os.environ.get('DATABASE_URL', default)
+    if url.startswith('postgres://'):
+        url = 'postgresql://' + url[len('postgres://'):]
+    return url
+
+
 class Config(object):
     """Base configuration."""
 
@@ -34,8 +42,7 @@ class ProdConfig(Config):
 
     ENV = 'prod'
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL',
-                                             'postgresql://localhost/example')
+    SQLALCHEMY_DATABASE_URI = database_url_from_env()
 
 
 class DevConfig(Config):

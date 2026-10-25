@@ -33,7 +33,7 @@ users
   id Integer() pk
   username String(length=80) unique
   email String(length=100) unique
-  password Binary() nullable
+  password LargeBinary(length=128) nullable
   created_at DateTime() -
   updated_at DateTime() -
   bio String(length=300) nullable

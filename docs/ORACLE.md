@@ -90,8 +90,8 @@ Otherwise every PR waits forever on a check that never reports.
 
   | Pin | Why |
   | --- | --- |
-  | `SQLAlchemy==1.1.9`, `Flask_SQLAlchemy==2.2` | pre-existing pins, kept |
-  | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask_SQLAlchemy 2.2 uses `_app_ctx_stack.__ident_func__`, removed in Werkzeug 2.1 / Flask 2.2 |
+  | `SQLAlchemy==1.4.54`, `Flask_SQLAlchemy==2.5.1` (+ `alembic==1.12.1`) | upgrade step 1: 1.1.9 does not import on Python ≥3.10; `db.Binary` became `db.LargeBinary` (same DDL), and `postgres://` URLs are rewritten to `postgresql://` |
+  | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask-JWT-Extended 3.x requires Flask <2; Flask is upgraded in a later step |
   | `Flask-JWT-Extended==3.25.1` (+ `PyJWT==1.7.1`) | the code uses `jwt_optional` / `user_loader_callback_loader`, removed in 4.0 |
   | `MarkupSafe==2.0.1` | Jinja2 2.11 imports `soft_unicode`, removed in MarkupSafe 2.1 |
   | `importlib-metadata==4.2.0` | `flake8==5.0.4` on Python 3.7 needs `<4.3` |
