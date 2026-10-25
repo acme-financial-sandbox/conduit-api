@@ -98,7 +98,7 @@ Otherwise every PR waits forever on a check that never reports.
   | `MarkupSafe==3.0.4`, `Flask-JWT-Extended==4.7.4`, `psycopg2==2.9.13` | pulled into step 4: Flask-JWT-Extended 4.3.1 needs Flask <3 (`JWT_COOKIE_CSRF_PROTECT = False` keeps the csrf claim out of header tokens); `add_models_to_shell=False` keeps the Flask-SQLAlchemy 3 shell context unchanged; Flask-SQLAlchemy 3 (also step 4, because 2.5.1 does not import on Flask 3) creates the engine in `init_app`, so the ProdConfig app now imports psycopg2, and 2.9.9 fails to import on Python 3.13 |
   | `flake8==5.0.4` | added so `flask lint` can run; kept from the 3.7 baseline, dev tools are upgraded in a later step |
   | `bcrypt==4.2.1` (held) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating; decided in a later step |
-  | `webargs==8.3.0`, `apispec==6.3.1` (held) | upgraded together with marshmallow in a later step |
+  | `marshmallow==3.26.2`, `webargs==8.7.1`, `apispec==6.10.0` | upgrade step 6. marshmallow stays on 3.x: flask-apispec 0.11.4 (no release since 2022) fails to import with marshmallow 4 |
   | `python-dateutil==2.9.0.post0` (held) | 3.0.0 is a brand-new major release (Faker dependency) |
   | `coverage==7.2.7` (held) | dev tools are upgraded in a later step |
   | `legacy-cgi==2.6.4` | WebOb (WebTest) needs it on Python ≥3.13, where `cgi` was removed |
