@@ -59,8 +59,8 @@ class TestJwtRequired:
         assert resp.json == {'msg': 'Not enough segments'}
 
     def test_bad_signature(self, testapp, token):
-        forged = jwt.encode(jwt.decode(token, verify=False), 'wrong-secret',
-                            algorithm='HS256').decode('ascii')
+        forged = jwt.encode(jwt.decode(token, options={'verify_signature': False}), 'wrong-secret',
+                            algorithm='HS256')
         resp = testapp.get(url_for('user.get_user'), headers=auth(forged), expect_errors=True)
         assert resp.status_int == 422
         assert resp.json == {'msg': 'Signature verification failed'}

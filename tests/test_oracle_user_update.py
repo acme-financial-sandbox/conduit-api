@@ -152,7 +152,7 @@ class TestLoginEdges:
 
 
 def _encode(claims, secret=TestConfig.SECRET_KEY):
-    return jwt.encode(claims, secret, algorithm='HS256').decode('ascii')
+    return jwt.encode(claims, secret, algorithm='HS256')
 
 
 class TestJwtEdges:

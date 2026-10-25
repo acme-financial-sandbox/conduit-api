@@ -56,17 +56,15 @@ class TestGetArticle:
         assert resp.json['article']['slug'] == created['slug']
         assert resp.json['article']['favorited'] is False
 
-    # ORACLE: encodes current (buggy) behavior — revisit after upgrade
-    @pytest.mark.oracle_known_bug
-    def test_identity_leaks_to_later_anonymous_requests_in_test_app(self, testapp, alice, bob):
-        """Flask-JWT-Extended 3 caches the user on the app context, which the ``app`` fixture
-        keeps pushed for the whole test, so an anonymous request still sees the last user."""
+    def test_identity_does_not_leak_to_later_anonymous_requests(self, testapp, alice, bob):
+        """Flask-JWT-Extended 4 keeps the user on the request context, so it no longer leaks
+        through the app context that the ``app`` fixture keeps pushed for the whole test."""
         created = make_article(testapp, alice)
         testapp.post(url_for('articles.favorite_an_article', slug=created['slug']), headers=auth(bob))
         testapp.post(url_for('profiles.follow_user', username='alice'), headers=auth(bob))
         resp = testapp.get(url_for('articles.get_article', slug=created['slug']))
-        assert resp.json['article']['favorited'] is True
-        assert resp.json['article']['author']['following'] is True
+        assert resp.json['article']['favorited'] is False
+        assert resp.json['article']['author']['following'] is False
 
     def test_not_found(self, testapp, db):
         resp = testapp.get(url_for('articles.get_article', slug='missing'), expect_errors=True)

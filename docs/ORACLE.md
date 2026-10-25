@@ -93,8 +93,8 @@ Otherwise every PR waits forever on a check that never reports.
   | Pin | Why |
   | --- | --- |
   | `SQLAlchemy==1.4.54`, `Flask_SQLAlchemy==2.5.1` (+ `alembic==1.12.1`) | upgrade step 1: 1.1.9 does not import on Python ≥3.10; `db.Binary` became `db.LargeBinary` (same DDL), and `postgres://` URLs are rewritten to `postgresql://` |
-  | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask-JWT-Extended 3.x requires Flask <2; Flask is upgraded in a later step |
-  | `Flask-JWT-Extended==3.25.1` (+ `PyJWT==1.7.1`) | the code uses `jwt_optional` / `user_loader_callback_loader`, removed in 4.0 |
+  | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask is upgraded in a later step |
+  | `Flask-JWT-Extended==4.3.1` (+ `PyJWT==2.15.1`) | upgrade step 3: last 4.x release that supports Flask 1. `JWT_IDENTITY_CLAIM = 'identity'` keeps the 3.x token layout (old tokens stay valid), and `conduit/jwt_compat.py` ports the 3.25.1 header parsing, token-type check and `jwt_optional` so responses are unchanged |
   | `MarkupSafe==2.0.1` | Jinja2 2.11 imports `soft_unicode`, removed in MarkupSafe 2.1 |
   | `flake8==5.0.4` | added so `flask lint` can run; kept from the 3.7 baseline, dev tools are upgraded in a later step |
   | `bcrypt==4.2.1` (held) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating; decided in a later step |
@@ -149,7 +149,6 @@ pytest -m oracle_known_bug --collect-only -q
 | `TestListArticles::test_by_favorited_ignores_who_favorited` | the `favorited` filter cross-joins `users`, so any existing username returns every favorited article |
 | `TestListArticles::test_author_and_favorited_together_raise` / `_is_500` | combining `author` + `favorited` gives `OperationalError: ambiguous column name` (500) |
 | `TestFavorite::test_favorited_state_leaks_across_articles` | `is_favourite`/`favorited` check "favorited any article": `favorited` is true on articles you never favorited, and favoriting a second article is silently skipped |
-| `TestGetArticle::test_identity_leaks_to_later_anonymous_requests_in_test_app` | test harness: Flask-JWT-Extended 3 caches the user on the app context, which the `app` fixture keeps pushed, so later anonymous requests in the same test still see the last user |
 | `test_oracle_user.py::TestLoginFailures::test_wrong_password_is_404_user_not_found` | a wrong password returns 404 `User not found`, not 401/422 |
 | `TestGetUser::test_echoes_token_parsed_from_raw_header` | `get_user` echoes the token parsed from `HTTP_AUTHORIZATION` with `split('Token ')[1]` |
 | `test_oracle_validation.py::TestUnvalidatedInput::*` | missing required fields (`username`/`email`/`password`/`title`/`description`/`body`), missing envelopes (`user`/`article`/`comment`), empty or form-encoded bodies, and unexpected `slug`/`createdAt` on create reach the view and raise `TypeError`/`KeyError` (500) |
