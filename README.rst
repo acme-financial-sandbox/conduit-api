@@ -68,7 +68,7 @@ To run all tests, run ::
 
     flask test
 
-The test suite is a frozen behavior baseline ("ground oracle") on Python 3.7.17
+The test suite is a frozen behavior baseline ("ground oracle") on Python 3.13.17
 with fully pinned requirements. CI also runs ``flask lint``. See ``docs/ORACLE.md``.
 
 

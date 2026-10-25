@@ -1,5 +1,5 @@
 # Everything needed in production
-# Frozen oracle baseline for Python 3.7.17 -- every package is pinned.
+# Frozen oracle baseline for Python 3.13.17 -- every package is pinned.
 # Regenerate only deliberately; see docs/ORACLE.md.
 
 # Direct dependencies
@@ -21,22 +21,17 @@ gunicorn==23.0.0
 Flask-Cors==5.0.0
 
 # Transitive dependencies
-alembic==1.12.1
+alembic==1.19.2
 apispec==6.3.1
 bcrypt==4.2.1
 cachelib==0.9.0
-greenlet==3.1.1
-importlib-metadata==4.2.0
-importlib-resources==5.12.0
+greenlet==3.5.6
 itsdangerous==1.1.0
 Jinja2==2.11.3
-Mako==1.2.4
+Mako==1.4.3
 MarkupSafe==2.0.1
-packaging==24.0
-python-dateutil==2.9.0.post0
+packaging==26.3
 six==1.17.0
-typing_extensions==4.7.1
-tzdata==2026.5
+typing_extensions==4.16.0
 Unidecode==1.4.0
 webargs==8.3.0
-zipp==3.15.0

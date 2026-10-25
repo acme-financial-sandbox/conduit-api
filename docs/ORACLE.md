@@ -6,7 +6,7 @@ quirks. Treat a failing oracle test as "behavior changed": find out why before y
 
 ## Running it
 
-The pinned environment is Python **3.7.17** (`runtime.txt`, `Pipfile`, CI image).
+The pinned environment is Python **3.13.17** (`runtime.txt`, `Pipfile`, CI image).
 
 ```sh
 pip install -r requirements/dev.txt
@@ -19,7 +19,7 @@ To match CI exactly, use the same container image:
 
 ```sh
 docker run --rm -v "$PWD":/src -w /src -e FLASK_APP=autoapp.py \
-  python:3.7.17-bookworm@sha256:eedf63967cdb57d8214db38ce21f105003ed4e4d0358f02bedc057341bcf92a0 \
+  python:3.13.17-bookworm@sha256:a3799099b64fd333f262768c7a64733f6e4edb7bc569813710a100214bdcf278 \
   sh -c 'pip install -r requirements/dev.txt && flask test && flask lint'
 ```
 
@@ -37,8 +37,8 @@ GitHub repository setting, not a committed file, so a repo admin has to apply it
 * requires a pull request before merging (no approvals required);
 * requires status checks to pass, with "require branches to be up to date" (`strict`) enabled;
 * requires both matrix jobs of the `CI` workflow, by their exact check names:
-  * `Oracle (Python 3.7.17, FLASK_DEBUG=0)`
-  * `Oracle (Python 3.7.17, FLASK_DEBUG=1)`
+  * `Oracle (Python 3.13.17, FLASK_DEBUG=0)`
+  * `Oracle (Python 3.13.17, FLASK_DEBUG=1)`
 * binds them to the GitHub Actions app (`app_id` 15368), so only Actions can satisfy them;
 * applies to admins too (`enforce_admins`).
 
@@ -53,8 +53,8 @@ gh api --method PUT \
   "required_status_checks": {
     "strict": true,
     "checks": [
-      {"context": "Oracle (Python 3.7.17, FLASK_DEBUG=0)", "app_id": 15368},
-      {"context": "Oracle (Python 3.7.17, FLASK_DEBUG=1)", "app_id": 15368}
+      {"context": "Oracle (Python 3.13.17, FLASK_DEBUG=0)", "app_id": 15368},
+      {"context": "Oracle (Python 3.13.17, FLASK_DEBUG=1)", "app_id": 15368}
     ]
   },
   "enforce_admins": true,
@@ -85,8 +85,10 @@ Otherwise every PR waits forever on a check that never reports.
   `Pipfile` mirrors the direct pins. The old `Pipfile.lock` was removed: it locked a different,
   older set (Flask 1.0.2, marshmallow 2) that no longer matched the code.
 * The pins come from a clean install of the previously unpinned requirements on 3.7.17, plus the
-  smallest set of constraints needed for the app to import at all. Today an unpinned install
-  resolves Flask 2.2 / Flask-JWT-Extended 4, and the app then crashes on import:
+  smallest set of constraints needed for the app to import at all. Upgrade step 2 moved to 3.13.17:
+  the direct pins were kept and the transitive ones re-resolved by a clean install on 3.13.17, except
+  for the holds marked "held" below. On 3.7.17 an unpinned install
+  resolved Flask 2.2 / Flask-JWT-Extended 4, and the app then crashed on import:
 
   | Pin | Why |
   | --- | --- |
@@ -94,8 +96,12 @@ Otherwise every PR waits forever on a check that never reports.
   | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask-JWT-Extended 3.x requires Flask <2; Flask is upgraded in a later step |
   | `Flask-JWT-Extended==3.25.1` (+ `PyJWT==1.7.1`) | the code uses `jwt_optional` / `user_loader_callback_loader`, removed in 4.0 |
   | `MarkupSafe==2.0.1` | Jinja2 2.11 imports `soft_unicode`, removed in MarkupSafe 2.1 |
-  | `importlib-metadata==4.2.0` | `flake8==5.0.4` on Python 3.7 needs `<4.3` |
-  | `flake8==5.0.4` | added so `flask lint` can run; last release supporting 3.7 |
+  | `flake8==5.0.4` | added so `flask lint` can run; kept from the 3.7 baseline, dev tools are upgraded in a later step |
+  | `bcrypt==4.2.1` (held) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating; decided in a later step |
+  | `webargs==8.3.0`, `apispec==6.3.1` (held) | upgraded together with marshmallow in a later step |
+  | `python-dateutil==2.9.0.post0` (held) | 3.0.0 is a brand-new major release (Faker dependency) |
+  | `coverage==7.2.7` (held) | dev tools are upgraded in a later step |
+  | `legacy-cgi==2.6.4` | WebOb (WebTest) needs it on Python ≥3.13, where `cgi` was removed |
 
   Everything else is the version the clean install resolved.
 

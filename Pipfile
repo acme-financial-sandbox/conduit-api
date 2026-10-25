@@ -35,5 +35,5 @@ Faker = "==18.13.0"
 flake8 = "==5.0.4"
 
 [requires]
-python_version = "3.7"
-python_full_version = "3.7.17"
+python_version = "3.13"
+python_full_version = "3.13.17"
