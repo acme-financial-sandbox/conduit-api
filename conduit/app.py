@@ -1,11 +1,32 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
-from flask import Flask
+from flask import Flask, current_app
 from conduit.extensions import bcrypt, cache, db, migrate, jwt, cors
 
 from conduit import commands, user, profile, articles
 from conduit.settings import ProdConfig
 from conduit.exceptions import InvalidUsage
+from conduit.http_compat import LegacyJSONProvider
+
+CORS_BLUEPRINTS = (user.views.blueprint, profile.views.blueprint, articles.views.blueprint)
+
+
+class _CorsHookCollector(object):
+    """Stands in for a blueprint so Flask-Cors hands over its after_request hook."""
+
+    def after_request(self, hook):
+        self.hook = hook
+        return hook
+
+
+def _apply_app_cors(response):
+    return current_app.extensions['conduit_cors'](response)
+
+
+# Flask >= 2.2 refuses after_request() on a blueprint that is already registered, so the CORS
+# hook is attached once and each app's own CORS options are looked up per request.
+for _blueprint in CORS_BLUEPRINTS:
+    _blueprint.after_request(_apply_app_cors)
 
 
 def create_app(config_object=ProdConfig):
@@ -15,6 +36,7 @@ def create_app(config_object=ProdConfig):
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__.split('.')[0])
+    app.json = LegacyJSONProvider(app)
     app.url_map.strict_slashes = False
     app.config.from_object(config_object)
     register_extensions(app)
@@ -37,13 +59,12 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     origins = app.config.get('CORS_ORIGIN_WHITELIST', '*')
-    cors.init_app(user.views.blueprint, origins=origins)
-    cors.init_app(profile.views.blueprint, origins=origins)
-    cors.init_app(articles.views.blueprint, origins=origins)
+    collector = _CorsHookCollector()
+    cors.init_app(collector, origins=origins)
+    app.extensions['conduit_cors'] = collector.hook
 
-    app.register_blueprint(user.views.blueprint)
-    app.register_blueprint(profile.views.blueprint)
-    app.register_blueprint(articles.views.blueprint)
+    for blueprint in CORS_BLUEPRINTS:
+        app.register_blueprint(blueprint)
 
 
 def register_errorhandlers(app):

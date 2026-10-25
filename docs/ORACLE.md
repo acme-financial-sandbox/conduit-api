@@ -93,9 +93,9 @@ Otherwise every PR waits forever on a check that never reports.
   | Pin | Why |
   | --- | --- |
   | `SQLAlchemy==1.4.54`, `Flask_SQLAlchemy==2.5.1` (+ `alembic==1.12.1`) | upgrade step 1: 1.1.9 does not import on Python ≥3.10; `db.Binary` became `db.LargeBinary` (same DDL), and `postgres://` URLs are rewritten to `postgresql://` |
-  | `Flask==1.1.4` (+ `Werkzeug==1.0.1`, `Jinja2==2.11.3`, `itsdangerous==1.1.0`, `click==7.1.2`) | Flask is upgraded in a later step |
+  | `Flask==3.1.3` (+ `Werkzeug==3.1.9`, `Jinja2==3.1.6`, `itsdangerous==2.2.0`, `click==8.5.0`, `blinker==1.9.0`, `Flask-Cors==6.0.5`) | upgrade step 4. `conduit/http_compat.py` keeps the Flask 1.1 `jsonify` bytes and the Werkzeug 1.0 HTML error pages; the blueprint CORS hook is attached once (Flask ≥2.2 forbids changing a registered blueprint) and looks up each app's options per request |
   | `Flask-JWT-Extended==4.3.1` (+ `PyJWT==2.15.1`) | upgrade step 3: last 4.x release that supports Flask 1. `JWT_IDENTITY_CLAIM = 'identity'` keeps the 3.x token layout (old tokens stay valid), and `conduit/jwt_compat.py` ports the 3.25.1 header parsing, token-type check and `jwt_optional` so responses are unchanged |
-  | `MarkupSafe==2.0.1` | Jinja2 2.11 imports `soft_unicode`, removed in MarkupSafe 2.1 |
+  | `MarkupSafe==3.0.4`, `Flask-JWT-Extended==4.7.4`, `Flask_SQLAlchemy==3.0.5`, `psycopg2==2.9.13` | pulled into step 4: Flask-JWT-Extended 4.3.1 needs Flask <3 (`JWT_COOKIE_CSRF_PROTECT = False` keeps the csrf claim out of header tokens); Flask-SQLAlchemy 2.5.1 imports `flask._app_ctx_stack`, removed in Flask 3, and 3.0.5 is the last release that supports SQLAlchemy 1.4 (`add_models_to_shell=False` keeps the shell context); Flask-SQLAlchemy 3 creates the engine in `init_app`, so the ProdConfig app now imports psycopg2, and 2.9.9 fails to import on Python 3.13 |
   | `flake8==5.0.4` | added so `flask lint` can run; kept from the 3.7 baseline, dev tools are upgraded in a later step |
   | `bcrypt==4.2.1` (held) | bcrypt 5 raises `ValueError` for passwords over 72 bytes instead of truncating; decided in a later step |
   | `webargs==8.3.0`, `apispec==6.3.1` (held) | upgraded together with marshmallow in a later step |
