@@ -38,6 +38,7 @@ class Config(object):
     # Keep the Flask-JWT-Extended 3 claim name (4.x defaults to 'sub') so tokens issued before the
     # upgrade stay valid and integer user ids don't trip PyJWT's "sub must be a string" check.
     JWT_IDENTITY_CLAIM = 'identity'
+    JWT_COOKIE_CSRF_PROTECT = False
 
 
 class ProdConfig(Config):
